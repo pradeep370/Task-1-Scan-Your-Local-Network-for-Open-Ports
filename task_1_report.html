@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Internship Task Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f5f9ff;
+            color: #000;
+        }
+        h1 {
+            text-align: center;
+            color: #004080;
+            font-size: 28px;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+        }
+        h2 {
+            color: #003366;
+        }
+        p, ul {
+            margin-bottom: 20px;
+        }
+        pre {
+            background: #eef3fa;
+            padding: 12px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border-left: 5px solid #004080;
+            border-radius: 4px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+            background-color: #fff;
+        }
+        th, td {
+            border: 1px solid #444;
+            padding: 10px;
+        }
+        th {
+            background-color: #d6e9ff;
+            color: #000;
+        }
+        u {
+            font-weight: bold;
+            color: #004080;
+        }
+        strong {
+            color: #003366;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>SCAN YOUR LOCAL NETWORK FOR OPEN PORTS</h1>
+
+    <p><strong>OBJECTIVE</strong><br>
+    To scan my local network for open ports using Nmap and understand which services are exposed, practicing basic network reconnaissance techniques.</p>
+
+    <p><strong>Date</strong> - 04 august 2025<br>
+    <strong>Submitted by</strong> - Pradeep s</p>
+
+    <p><strong>TOOLS ARE USED BY ME</strong><br>
+     * Nmap - for port scanning<br>
+     * Command Prompt/terminal - to find Local IP address<br>
+     * Wireshark - to capture network traffic during scan</p>
+
+    <p><strong>STEPS WHICH I FOLLOWED FOR ENVIRONMENT SETUP</strong><br>
+     * I installed a vulnerable Windows machine as the target system inside Oracle VirtualBox.<br>
+     * Used Kali Linux as the attacker machine, also running inside the VirtualBox.<br>
+     * I Configured both machines to use a Bridged Adapter network.</p>
+
+    <p><strong>FIND LOCAL IP ADDRESSES</strong><br>
+     * I found local IP addresses using:<br>
+          ipconfig (on Windows) and ifconfig (on Kali Linux).<br><br>
+     * The Identified Ip addresses of Attacker and Target machine is,<br>
+          Kali Linux (Attacker machine):192.168.1.9<br>
+          Windows (target Machine):192.168.1.8<br><br>
+          (Router/Modem): 192.168.1.1<br>
+          (Windows/Main os): 192.168.1.7<br><br>
+     * Subnet Mask (Both Systems):255.255.255.0<br><br>
+     * Before starting the scan, I tested the interconnectivity between Kali Linux and the Windows VM using the ping command.<br><br>
+     * After I Run TCP SYN scan using this Command:<br>
+     <pre>nmap -sS 192.168.1.8/24</pre></p>
+
+    <p><strong>RESULTS OBSERVED</strong></p>
+    <p><u>HOST (1)- 192.168.1.8 (Target Windows System)</u></p>
+    <pre>
+  Open Ports and Services:
+    21/tcp   open     ftp
+    22/tcp   open     ssh
+    23/tcp   open     telnet
+    135/tcp  open     msrpc
+    139/tcp  open     netbios-ssn
+    445/tcp  open     microsoft-ds
+    3306/tcp open     mysql
+    3389/tcp open     ms-wbt-server (RDP)
+    5985/tcp open     wsman
+    8080/tcp open     http-proxy
+    8081/tcp open     intermapper
+    8383/tcp open     m2mservices
+    9200/tcp open     wap-wsp
+    49152/tcp to 49155/tcp open     dynamic RPC ports
+    </pre>
+
+    <p><u>HOST (2) - 192.168.1.9 (Attacker Machine)</u><br>
+    1000 ports scanned,no responce (ignored)</p>
+
+    <p><u>HOST (3) - 192.168.1.7 (Windows/Main os)</u><br>
+    No open ports found</p>
+
+    <p><u>HOST (4) - 192.168.1.1 (Router/Modem)</u></p>
+    <pre>
+    21/ftp
+    22/ssh
+    23/telnet
+    53/dns
+    80/http 
+    443/https
+    </pre>
+
+    <p><strong>RISK IDENTIFIED</strong></p>
+    <table>
+        <tr>
+            <th>Port</th>
+            <th>Service</th>
+            <th>Common Vulnerability</th>
+            <th>CVE ID</th>
+            <th>CVSSScore</th>
+            <th>Risk Level</th>
+        </tr>
+        <tr>
+            <td>21</td>
+            <td>FTP</td>
+            <td>Anonymous login, buffer overflow</td>
+            <td>CVE-2001-0550</td>
+            <td>7.5</td>
+            <td>High</td>
+        </tr>
+        <tr>
+            <td>22</td>
+            <td>SSH</td>
+            <td>Weak key exchange or default creds</td>
+            <td>CVE-2018-15473</td>
+            <td>8.1</td>
+            <td>High</td>
+        </tr>
+        <tr>
+            <td>23</td>
+            <td>Telnet</td>
+            <td>Clear-text login credentials</td>
+            <td>CVE-1999-0617</td>
+            <td>9.8</td>
+            <td>Critical</td>
+        </tr>
+        <tr>
+            <td>135</td>
+            <td>RPC</td>
+            <td>DCOM buffer overflow</td>
+            <td>CVE-2003-0352</td>
+            <td>10.0</td>
+            <td>Critical</td>
+        </tr>
+        <tr>
+            <td>3306</td>
+            <td>MySQL</td>
+            <td>Auth bypass / RCE (varies by version)</td>
+            <td>CVE-2012-2122</td>
+            <td>6.8</td>
+            <td>Medium</td>
+        </tr>
+        <tr>
+            <td>3389</td>
+            <td>RDP</td>
+            <td>BlueKeep – RDP Remote Code Execution</td>
+            <td>CVE-2019-0708</td>
+            <td>9.8</td>
+            <td>Critical</td>
+        </tr>
+    </table>
+
+</body>
+</html>
